@@ -1,17 +1,38 @@
 <html>
 	<head>
+		<meta charset="UTF-8" />
 		<link rel="stylesheet" href="style.css" />
 	</head>
 
-	<body >
+	<body>
 		<header class="header">Emlexis</header>
-		<div class="division">
-			<div class="div1">
-				<button id="submit">Search</button>
-				<div id="result"></div>
-				<button id="export">Export CSV</button>
+
+		<main class="container">
+			<div class="card">
+				<h1 class="headline">Find emails on this page</h1>
+				<p class="subheadline">Scan the active tab and export results as CSV.</p>
+
+				<div class="actions">
+					<button id="submit" class="btn primary">
+						<span class="btn-icon">🔎</span>
+						<span>Search</span>
+					</button>
+				</div>
+
+				<div id="result" class="result"></div>
+				<button id="export" class="btn ghost">Export CSV</button>
 			</div>
-		</div>
+
+			<footer class="footer">
+				<span class="muted">v1.0</span>
+			</footer>
+
+			<div class="credit">
+				<a href="https://x.com/twtSujaL" class="one">Made with ❤️ by Sujal</a>
+				<a href="https://github.com/Sran012/Emlexis" class="one">⭐ Star it</a>
+			</div>
+		</main>
+
 		<script src="popup.js"></script>
 	</body>
 </html>
