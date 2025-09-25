@@ -2,8 +2,10 @@
 It's a chrome extension for extracting all emails from any web page you visit and can use those emails for outreach and collaboration.
 
 ## Features (coming soon..)
-- **You can get all emails from any email directory.
-- **Paste those emails easily in your excel sheet.
+- You can scan all emails from any email directory.
+- Download CSV file of all emails 
+- open CSV file and get your emails imported to excel.
+- Emails separated by categories...
 
 ## Running 
 1. Clone the repo
@@ -18,3 +20,6 @@ git clone https://github.com/Sran012/Emlexis.git
 6. Find project folder and select to load
 
 Now, you can visit any website and click on Emlexis extension, pop-up will open and click submit button and it will show all emails found from that tab in pop-up window.
+
+###
+Made with ❤️ by [Sujal rana](https://github.com/Sran012)
