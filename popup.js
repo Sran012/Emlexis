@@ -1,4 +1,3 @@
-
 document.getElementById("submit").addEventListener('click', () => {
 
 	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -6,23 +5,26 @@ document.getElementById("submit").addEventListener('click', () => {
 			target: {tabId: tabs[0].id},
 			function: getPageText
 		}, function(results){
-			const emails = results[0].result;
-			
-			const otherEmails = emails.otherEmails;
-			const supportEmails = emails.supportEmails;
-			const salesEmails = emails.salesEmails;
 
-			const otherUniqueEmails = [...new Set(otherEmails)];
-			const supportUniqueEmails = [...new Set(supportEmails)];
-			const salesUniqueEmails = [...new Set(salesEmails)];
-
-
-			const resultsDiv = document.getElementById('result');
-			if(otherUniqueEmails.length === 0 && supportUniqueEmails.length === 0 && salesUniqueEmails.length === 0){
-				resultsDiv.innerHTML = "No emails found";
-			} else {
-				resultsDiv.innerHTML = "sales : <br>" + salesUniqueEmails.join(", ") + "Support : <br>" + supportUniqueEmails.join(", ") + "<br>Other : <br>" + otherUniqueEmails.join(", ");
+			if (!results || !results[0]) {
+				alert("No results returned from content script");
+				return;
 			}
+			
+			const resultsDiv = document.getElementById('result');
+
+			const category = results[0].result;
+			const combined = [...category.support, ...category.sales, ...category.info, ...category.personal];
+			const hasEmails = combined.length > 0;
+			
+			resultsDiv.innerHTML = "found : " + combined.length + " emails<br>";
+				
+				const exportBtn = document.getElementById("export");
+				exportBtn.onclick = () => exportCSV(combined);
+				exportBtn.disabled = !hasEmails;
+
+				resultsDiv.classList.toggle("visible", hasEmails);
+				exportBtn.classList.toggle("visible", hasEmails);
 			}
 		);
 	});
@@ -33,26 +35,50 @@ document.getElementById("submit").addEventListener('click', () => {
 function getPageText() {
 	const pageText = document.body.innerText;
 
-	const emailPattern = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+	const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
-	const foundEmails = pageText.match(emailPattern);
+	const foundEmails = pageText.match(emailPattern) || [];
 
-	const supportEmails = [];
-	const salesEmails = [];
-	const otherEmails = [];
+		const uniqueEmails = [...new Set(foundEmails)];
 
-	if (foundEmails) {
-		foundEmails.forEach(email => {
-			const firstPart = email.split('@')[0];
-			if (firstPart.includes("support")){
-				supportEmails.push(email.toLowerCase());
-			} else if (firstPart.includes("sales")){
-				sales.push(email.toLowerCase());
+
+		const category = {
+			support: [],
+			sales: [],
+			info: [],
+			personal: []
+		}
+	
+		uniqueEmails.forEach(e => {
+			if (/^(support|help|care)/i.test(e)) {
+				category.support.push(e);
+			} else if (/^(sales|business|partner)/i.test(e)){
+				category.sales.push(e);
+			} else if (/^(info|contact|admin|hello|office)/i.test(e)){
+				category.info.push(e);
 			} else {
-				otherEmails.push(email.toLowerCase());
+				category.personal.push(e);
 			}
-		})
-	}
+		});
 
-	return {"supportEmails": supportEmails,"salesEmails" : salesEmails, "otherEmails": otherEmails};
+
+		return category;
 }
+
+
+
+
+function exportCSV(emails){
+	const csv = emails.join("\n");
+	const blob = new Blob([csv], {type: "text/csv"});
+	const url = URL.createObjectURL(blob);
+	downloadFile(url, "emails.csv")
+}
+
+function downloadFile(url, filename){
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = filename;
+	a.click();
+}
+

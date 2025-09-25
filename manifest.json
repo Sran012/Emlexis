@@ -1,8 +1,9 @@
 {
 	"manifest_version": 3,
-	"name" : "Email tool",
+	"name" : "Emlexis",
 	"version" : "1.0",
-	"permissions":["activeTab","scripting"],
+	"permissions":["activeTab","scripting","tabs"],
+	"host_permissions": ["<all_urls>"],
 	"action": {"default_popup": "popup.html"}
 }
 
