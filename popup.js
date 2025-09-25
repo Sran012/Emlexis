@@ -82,3 +82,17 @@ function downloadFile(url, filename){
 	a.click();
 }
 
+
+document.addEventListener('click', (event) => {
+	const anchor = event.target.closest('a');
+	if (!anchor) return;
+	const href = anchor.getAttribute('href');
+	if (!href) return;
+	event.preventDefault();
+	try {
+		chrome.tabs.create({ url: href });
+	} catch (e) {
+		window.open(href, '_blank', 'noopener,noreferrer');
+	}
+});
+
