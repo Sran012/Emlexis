@@ -4,20 +4,24 @@ document.getElementById("submit").addEventListener('click', () => {
 		chrome.scripting.executeScript({
 			target: {tabId: tabs[0].id},
 			function: getPageText
-		}, function(results){
+		},function(results){
+
 
 			if (!results || !results[0]) {
-				alert("No results returned from content script");
 				return;
 			}
 			
-			const resultsDiv = document.getElementById('result');
-
 			const category = results[0].result;
 			const combined = [...category.support, ...category.sales, ...category.info, ...category.personal];
-			const hasEmails = combined.length > 0;
+			const hasEmails = combined.length >= 0;
+
+			const resultsDiv = document.getElementById('result');
 			
-			resultsDiv.innerHTML = "found : " + combined.length + " emails<br>";
+			if (hasEmails == 0 || null) {
+				resultsDiv.innerHTML = "Nothing found";
+			} else {
+				resultsDiv.innerHTML = "found : " + combined.length + " emails<br>";
+			}
 				
 				const exportBtn = document.getElementById("export");
 				exportBtn.onclick = () => exportCSV(combined);
@@ -72,7 +76,7 @@ function exportCSV(emails){
 	const csv = emails.join("\n");
 	const blob = new Blob([csv], {type: "text/csv"});
 	const url = URL.createObjectURL(blob);
-	downloadFile(url, "emails.csv")
+	downloadFile(url, "emails.csv");
 }
 
 function downloadFile(url, filename){
