@@ -13,22 +13,27 @@ document.getElementById("submit").addEventListener('click', () => {
 			
 			const category = results[0].result;
 			const combined = [...category.support, ...category.sales, ...category.info, ...category.personal];
-			const hasEmails = combined.length >= 0;
+			const hasEmails = combined.length > 0;
 
 			const resultsDiv = document.getElementById('result');
 			
-			if (hasEmails == 0 || null) {
+			if (!hasEmails) {
 				resultsDiv.innerHTML = "Nothing found";
 			} else {
 				resultsDiv.innerHTML = "found : " + combined.length + " emails<br>";
 			}
 				
 				const exportBtn = document.getElementById("export");
-				exportBtn.onclick = () => exportCSV(combined);
+				exportBtn.onclick = () => exportCategorizedCSV(category);
 				exportBtn.disabled = !hasEmails;
 
-				resultsDiv.classList.toggle("visible", hasEmails);
+				const exportJsonBtn = document.getElementById("exportJson");
+				exportJsonBtn.onclick = () => exportCategorizedJSON(category);
+				exportJsonBtn.disabled = !hasEmails;
+
+				resultsDiv.classList.toggle("visible", hasEmails || !hasEmails);
 				exportBtn.classList.toggle("visible", hasEmails);
+				exportJsonBtn.classList.toggle("visible", hasEmails);
 			}
 		);
 	});
@@ -72,12 +77,37 @@ function getPageText() {
 
 
 
-function exportCSV(emails){
-	const csv = emails.join("\n");
-	const blob = new Blob([csv], {type: "text/csv"});
+function exportCategorizedCSV(category){
+	const rows = [];
+	rows.push(["Category","Email"]);
+	const pushRows = (catName, arr) => {
+		arr.forEach(email => rows.push([catName, email]));
+	};
+	pushRows("support", category.support);
+	pushRows("sales", category.sales);
+	pushRows("info", category.info);
+	pushRows("personal", category.personal);
+
+	const csv = rows.map(cols => cols.map(value => {
+		const str = String(value ?? "");
+		if (/[",\n]/.test(str)) {
+			return '"' + str.replace(/"/g, '""') + '"';
+		}
+		return str;
+	}).join(",")).join("\n");
+
+	const blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
 	const url = URL.createObjectURL(blob);
-	downloadFile(url, "emails.csv");
+	downloadFile(url, "emails_categorized.csv");
 }
+
+function exportCategorizedJSON(category){
+	const jsonString = JSON.stringify(category, null, 2);
+	const blob = new Blob([jsonString], {type: "application/json"});
+	const url = URL.createObjectURL(blob);
+	downloadFile(url, "emails_categorized.json");
+}
+
 
 function downloadFile(url, filename){
 	const a = document.createElement("a");
