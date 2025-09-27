@@ -2,10 +2,11 @@
 It's a chrome extension for extracting all emails from any web page you visit and can use those emails for outreach and collaboration.
 
 ## Features (coming soon..)
-- You can scan all emails from any email directory.
-- Download CSV file of all emails 
-- open CSV file and get your emails imported to excel.
+- You can scan all emails from any website or email directory.
+- Download CSV file of all emails.
+- open CSV file and get your emails imported to Excel.
 - Emails separated by categories...
+- Download categorized emails in JSON format aswell.
 
 ## Running 
 1. Clone the repo
