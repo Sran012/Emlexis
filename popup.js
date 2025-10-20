@@ -1,6 +1,6 @@
 document.getElementById("submit").addEventListener('click', () => {
 
-	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+	chrome.tabs.query({ currentWindow: true }, (tabs) => {
 		chrome.scripting.executeScript({
 			target: {tabId: tabs[0].id},
 			function: getPageText
@@ -10,6 +10,12 @@ document.getElementById("submit").addEventListener('click', () => {
 			if (!results || !results[0]) {
 				return;
 			}
+
+			if (chrome.runtime.lastError) {
+                console.error("Error executing script:", chrome.runtime.lastError.message);
+                document.getElementById('result').innerHTML = "Error: " + chrome.runtime.lastError.message;
+                return;
+            }
 			
 			const category = results[0].result;
 			const combined = [...category.support, ...category.sales, ...category.info, ...category.personal];
