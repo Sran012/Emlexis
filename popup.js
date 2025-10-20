@@ -26,7 +26,11 @@ document.getElementById("submit").addEventListener('click', () => {
 			if (!hasEmails) {
 				resultsDiv.innerHTML = "Nothing found";
 			} else {
-				resultsDiv.innerHTML = "found : " + combined.length + " emails<br>";
+				resultsDiv.innerHTML = `Found: ${combined.length} emails<br>
+                    Support: ${category.support.length}<br>
+                    Sales: ${category.sales.length}<br>
+                    Info: ${category.info.length}<br>
+                    Personal: ${category.personal.length}`;
 			}
 				
 				const exportBtn = document.getElementById("export");
